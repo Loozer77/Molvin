@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JetX Predictor</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    textarea, button { width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; }
+    #result { margin-top: 20px; font-size: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>JetX Predictor</h1>
+  <p>Paste the last 5 JetX multipliers (comma separated):</p>
+  <textarea id="input" rows="2" placeholder="e.g. 1.12, 1.25, 1.34, 2.60, 12.30"></textarea>
+  <button onclick="predict()">Predict Next Round</button>
+  <div id="result"></div>
+
+  <script>
+    function predict() {
+      const input = document.getElementById('input').value;
+      const values = input.split(',').map(v => parseFloat(v.trim())).filter(x => !isNaN(x));
+      if (values.length < 5) {
+        document.getElementById('result').innerText = "Please enter at least 5 valid numbers.";
+        return;
+      }
+      const recent = values.slice(-5);
+      const lowCount = recent.filter(x => x <= 1.40).length;
+      const highCount = recent.filter(x => x >= 10.0).length;
+
+      let signal;
+      if (highCount >= 1) {
+        signal = "🔴 High Risk – Avoid";
+      } else if (lowCount >= 3) {
+        signal = "🟢 Likely Safe – Trend Reversal Expected";
+      } else {
+        signal = "🟡 Neutral – No Clear Signal";
+      }
+
+      document.getElementById('result').innerText = `Prediction: ${signal}`;
+    }
+  </script>
+</body>
+</html>
